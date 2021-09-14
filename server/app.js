@@ -11,9 +11,15 @@ import { connectDB } from './database/database.js';
 
 const app = express();
 
+
+const corrsOption = {
+  origin: config.cors.allowedOrigin, // 환경변수에 있는 cors의 Origin정보를 읽어온다.
+  optionsSuccessStatus : 200,
+}
+
 app.use(express.json());
 app.use(helmet());
-app.use(cors());
+app.use(cors(corsOption));
 app.use(morgan('tiny'));
 
 app.use('/tweets', tweetsRouter);
@@ -30,7 +36,8 @@ app.use((error, req, res, next) => {
 
 connectDB()
   .then(() => {
-    const server = app.listen(config.host.port);
+    console.log(`Server is started... ${new Date()}`);
+    const server = app.listen(config.port);
     initSocket(server);
   })
   .catch(console.error);
